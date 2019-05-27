@@ -1,0 +1,20 @@
+PODS:
+  - Alamofire (4.8.2)
+  - SwiftChart (1.0.1)
+
+DEPENDENCIES:
+  - Alamofire (= 4.8.2)
+  - SwiftChart (= 1.0.1)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - SwiftChart
+
+SPEC CHECKSUMS:
+  Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
+  SwiftChart: ba767a678d568a5ee22d419e146a0582865e1aff
+
+PODFILE CHECKSUM: 6205cd747d4c7f60a8af13335a09fbd2c8941111
+
+COCOAPODS: 1.6.1
