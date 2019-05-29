@@ -20,6 +20,8 @@ class CryptoTableViewController: UITableViewController, CoinDataDelegate {
         if LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil){
             updateSecureButton()
         }
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Report", style: .plain, target: self, action: #selector(reportTapped))
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -28,7 +30,23 @@ class CryptoTableViewController: UITableViewController, CoinDataDelegate {
     }
 
     // MARK: - Table view data source
-
+    @objc func reportTapped(){
+        let formatter = UIMarkupTextPrintFormatter(markupText: CoinData.shared.html())
+        let render  = UIPrintPageRenderer()
+        render.addPrintFormatter(formatter, startingAtPageAt: 0)
+        let page = CGRect(x:0, y:0, width: 595.2, height:841.8)
+        render.setValue(page, forKey: "paperRect")
+        render.setValue(page, forKey: "printableRect")
+        let pdfData = NSMutableData()
+        UIGraphicsBeginPDFContextToData(pdfData, .zero, nil)
+        for i in 0..<render.numberOfPages{
+            UIGraphicsBeginPDFPage()
+            render.drawPage(at: i, in: UIGraphicsGetPDFContextBounds())
+        }
+        UIGraphicsEndPDFContext()
+        let shareVC = UIActivityViewController(activityItems: [pdfData], applicationActivities: nil)
+        present(shareVC, animated: true, completion: nil)
+    }
     
     override func viewWillAppear(_ animated: Bool) {
                 CoinData.shared.delegate = self
