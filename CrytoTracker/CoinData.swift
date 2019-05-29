@@ -18,9 +18,17 @@ class CoinData{
             let coin = Coin(symbol: symbol)
             coins.append(coin)
         }
-        
-        
     }
+    
+    func netWorthAsString()->String{
+        var netWorth = 0.0
+        for coin in coins{
+            netWorth += coin.amount * coin.price
+        }
+        return doubleToMoneyString(double: netWorth)
+    }
+    
+    
     func getPrices(){
         var listOfSymbols = ""
         for coin in coins {
@@ -90,10 +98,16 @@ class Coin{
         }
     }
     
+    
+    
     func priceAsString()->String{
         if price == 0.0{
             return "Loading"
         }
        return CoinData.shared.doubleToMoneyString(double: price)
+    }
+    
+    func amountAsString()->String{
+        return CoinData.shared.doubleToMoneyString(double: amount * price)
     }
 }

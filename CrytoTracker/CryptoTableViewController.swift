@@ -8,12 +8,15 @@
 
 import UIKit
 
+private let headerHeight : CGFloat  = 100.0
+private let netWorthHeight: CGFloat = 45.0
 class CryptoTableViewController: UITableViewController, CoinDataDelegate {
 
+    var amountLabel = UILabel()
     override func viewDidLoad() {
         super.viewDidLoad()
         CoinData.shared.getPrices()
-        CoinData.shared.delegate = self
+
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -23,6 +26,12 @@ class CryptoTableViewController: UITableViewController, CoinDataDelegate {
 
     // MARK: - Table view data source
 
+    
+    override func viewWillAppear(_ animated: Bool) {
+                CoinData.shared.delegate = self
+        tableView.reloadData()
+        displayNetWorth()
+    }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return CoinData.shared.coins.count
@@ -33,7 +42,14 @@ class CryptoTableViewController: UITableViewController, CoinDataDelegate {
         let cell = UITableViewCell()
 
         let coin = CoinData.shared.coins[indexPath.row]
-        cell.textLabel?.text =  "\(coin.symbol) - \(coin.priceAsString())"
+        
+        if coin.amount != 0.0{
+       cell.textLabel?.text =  "\(coin.symbol) - \(coin.priceAsString()) - \(coin.amount)"
+        }else{
+            cell.textLabel?.text =  "\(coin.symbol) - \(coin.priceAsString())"
+        }
+        
+        
         cell.imageView?.image  = coin.image
         return cell
     }
@@ -42,8 +58,36 @@ class CryptoTableViewController: UITableViewController, CoinDataDelegate {
         coinVC.coin = CoinData.shared.coins[indexPath.row]
         navigationController?.pushViewController(coinVC, animated: true)
     }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return headerHeight
+    }
 
+    func displayNetWorth(){
+        amountLabel.text = CoinData.shared.netWorthAsString()
+    }
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return createHeaderView()
+    }
+    func createHeaderView()->UIView{
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: headerHeight))
+        headerView.backgroundColor = UIColor.white
+        let netWorthLabel = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: netWorthHeight))
+        netWorthLabel.text = "My Crypto Net Worth"
+        netWorthLabel.textAlignment  = .center
+        headerView.addSubview(netWorthLabel)
+        
+        amountLabel.frame = CGRect(x: 0, y: netWorthHeight, width: view.frame.size.width, height: headerHeight - netWorthHeight)
+        amountLabel.textAlignment = .center
+        amountLabel.font = UIFont.boldSystemFont(ofSize: 60.0)
+        headerView.addSubview(amountLabel)
+        
+        displayNetWorth()
+        return headerView
+        
+    }
     func newPrices() {
+        displayNetWorth()
         tableView.reloadData()
     }
 }
